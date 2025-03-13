@@ -69,6 +69,12 @@ public class UserAuthentication {
     public ResponseEntity<?> UserSignUp(UserSignUpDto userSignUpDto, MultipartFile file){
         String filePath;
         log.info("UserSignUp 메서드 실행");
+
+        if(userRepository.existsByUserEmail(userSignUpDto.getUserEmail())){
+            return ResponseEntity.badRequest()
+                    .body(ResponseDto.response(HttpStatus.BAD_REQUEST, "이미 회원이 존재합니다.", null));
+        }
+
         if (file != null && !file.isEmpty()) //file이 존재할 경우 처리
         {
             try { //이미지파일 업로드 예외처리
