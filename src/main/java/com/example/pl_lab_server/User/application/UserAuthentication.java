@@ -6,6 +6,7 @@ import com.example.pl_lab_server.Common.util.JWTutil;
 import com.example.pl_lab_server.Common.util.SecurityUtil;
 import com.example.pl_lab_server.User.Dto.UserLoginDto;
 import com.example.pl_lab_server.User.Dto.UserSignUpDto;
+import com.example.pl_lab_server.User.Dto.UserUpdateDto;
 import com.example.pl_lab_server.User.domain.entity.UserEntity;
 import com.example.pl_lab_server.User.domain.repository.UserRepository;
 import jakarta.servlet.http.HttpServletRequest;
@@ -13,6 +14,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -55,7 +57,15 @@ public class UserAuthentication {
             if(hash.matches(userLoginDto.getUserPw(), userEntity.getUserPw())){
                 return ResponseEntity
                         .ok(ResponseDto
-                                .response(HttpStatus.OK, "로그인에 성공하였습니다", jwTutil.createToken(userLoginDto.getUsreName(), userEntity.getType(), this.expirationTime, securityUtil.getClientIpv4(request))));
+                                .response(HttpStatus.OK, "로그인에 성공하였습니다", jwTutil
+                                        .createToken(
+                                                userLoginDto.getUsreName(),
+                                                userEntity.getType(),
+                                                this.expirationTime,
+                                                securityUtil.getClientIpv4(request),
+                                                userLoginDto.getUserEmail()
+
+                                        )));
             } else {
                 return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
                         .body(ResponseDto.response(HttpStatus.UNAUTHORIZED, "비밀번호가 일치하지 않습니다", null));
@@ -85,7 +95,7 @@ public class UserAuthentication {
                 filePath = "/images/" + fileName;
                 file.transferTo(new File(uploadDir + File.separator + fileName));
 
-                userSignUpDto.setUserImageURL(filePath); //이미지 파일 경로 저장
+                userSignUpDto.setUserImageURL(securityUtil.encrypt(filePath)); //이미지 파일 경로 암호화 저장
 
             } catch (Exception e) {
                 return ResponseEntity.badRequest()
@@ -93,7 +103,7 @@ public class UserAuthentication {
             }
         } else{
             filePath = null; //이미지 파일이 없을 경우 null로 초기화
-            userSignUpDto.setUserImageURL(filePath); //이미지 파일 경로 저장
+            userSignUpDto.setUserImageURL(filePath);
         }
 
 
@@ -101,10 +111,18 @@ public class UserAuthentication {
 //            "ROLE_USER" - 일반 사용자
 //            "ROLE_ADMIN" - 관리자
 //            "ROLE_GUEST" - 게스트 사용자
-            userSignUpDto.setRegDt(baseUtil.getTodayANDtime());
+            userSignUpDto.setUserPhone(securityUtil.encrypt(userSignUpDto.getUserPhone()));
+            //높은수준 폰번호 암호화 후 저장
+            userSignUpDto.setUsreName(securityUtil.encrypt(userSignUpDto.getUsreName()));
+            //높은수준 이름 암호화 후 저장
+            userSignUpDto.setStdNo(securityUtil.SimpleEncrypt(userSignUpDto.getStdNo()));
+            //낮은수준 학번 암호화 후 저장
+            userSignUpDto.setRegDt(securityUtil.SimpleEncrypt(baseUtil.getTodayANDtime()));
+            //낮은수준 등록일 암호화 후 저장
+
             userSignUpDto.setGradDt(null);
             userSignUpDto.setUserPw(hash.encode(userSignUpDto.getUserPw()));
-            userSignUpDto.setType("ROLE_ADMIN");
+            userSignUpDto.setType(securityUtil.encrypt("ROLE_USER")); //사용자 권한 암호화
             userRepository.save(userSignUpDto.toEntity());
             return ResponseEntity
                     .ok(ResponseDto.response(HttpStatus.OK, "회원가입에 성공하였습니다", null));
@@ -114,6 +132,68 @@ public class UserAuthentication {
             log.error("error : " + e.getMessage());
             return ResponseEntity.badRequest()
                     .body(ResponseDto.response(HttpStatus.BAD_REQUEST, "회원가입에 실패하였습니다.", null));
+        }
+    }
+
+    public ResponseEntity<?> UserUpdate(UserUpdateDto userUpdateDto, MultipartFile file, HttpServletRequest request){
+        String filePath;
+        UserSignUpDto userSignUpDto = new UserSignUpDto();
+
+        String token = request.getHeader("Authorization");
+        token = token.substring(7); // "Bearer " 제거
+
+        if(userRepository.existsByUserEmail(userUpdateDto.getUserEmail())){ //유저가 존재한다면
+
+            //---jwt 검증 로직
+            if(jwTutil.getEmail(token).equals(userUpdateDto.getUserEmail())){
+                log.info("유효한 토큰입니다.");
+            } else {
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                        .body(ResponseDto.response(HttpStatus.UNAUTHORIZED, "토큰이 유효하지 않습니다", null));
+            }
+
+            userSignUpDto = userRepository.findByUserEmail(userUpdateDto.getUserEmail()).toDto();
+            if (file != null && !file.isEmpty()) //file이 존재할 경우 처리
+            {
+                try { //이미지파일 업로드 예외처리
+                    log.info("이미지 처리 로직 실행");
+                    String fileName = file.getOriginalFilename(); //파일 이름
+                    Resource resource = resourceLoader.getResource("classpath:static/images");
+                    String uploadDir = resource.getFile().getAbsolutePath();
+                    filePath = "/images/" + fileName;
+                    file.transferTo(new File(uploadDir + File.separator + fileName));
+
+                    userUpdateDto.setUserImageURL(securityUtil.encrypt(filePath)); //이미지 파일 경로 암호화 저장
+
+                } catch (Exception e) {
+                    return ResponseEntity.badRequest()
+                            .body(ResponseDto.response(HttpStatus.BAD_REQUEST, "이미지 저장에 실패하였습니다.", null));
+                }
+            } else{
+                filePath = null; //이미지 파일이 없을 경우 null로 초기화
+                userUpdateDto.setUserImageURL(filePath);
+            }
+
+            try {
+                userSignUpDto.setUserPw(hash.encode(userUpdateDto.getUserPw()));
+                userSignUpDto.setUsreName(securityUtil.encrypt(userUpdateDto.getUserName()));
+                userSignUpDto.setUserPhone(securityUtil.encrypt(userUpdateDto.getUserPhone()));
+                userSignUpDto.setUserImageURL(userUpdateDto.getUserImageURL());
+                userRepository.save(userSignUpDto.toEntity());
+                return ResponseEntity
+                        .ok(ResponseDto.response(HttpStatus.OK, "업데이트에 성공하였습니다", null));
+
+
+            } catch (Exception e) {
+                log.error("error : " + e.getMessage());
+                return ResponseEntity.badRequest()
+                        .body(ResponseDto.response(HttpStatus.BAD_REQUEST, "업데이트에 실패하였습니다.", null));
+            }
+
+
+        } else {
+            return ResponseEntity.badRequest()
+                    .body(ResponseDto.response(HttpStatus.BAD_REQUEST, "조회된 유저가 없습니다", null));
         }
     }
 }

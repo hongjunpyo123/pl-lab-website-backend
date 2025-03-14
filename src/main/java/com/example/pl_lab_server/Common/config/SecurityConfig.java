@@ -1,6 +1,7 @@
 package com.example.pl_lab_server.Common.config;
 
 import com.example.pl_lab_server.Common.filter.LoginFilter;
+import com.example.pl_lab_server.Common.util.BaseUtil;
 import com.example.pl_lab_server.Common.util.JWTutil;
 import com.example.pl_lab_server.Common.util.SecurityUtil;
 import jakarta.servlet.ServletException;
@@ -30,12 +31,14 @@ import java.io.IOException;
 public class SecurityConfig {
     private final JWTutil jwtUtil;
     private final SecurityUtil securityUtil;
+    private final BaseUtil baseUtil;
     private final AuthenticationConfiguration authenticationConfiguration;
 
-    public SecurityConfig(AuthenticationConfiguration authenticationConfiguration, JWTutil jwtUtil, SecurityUtil securityUtil) {
+    public SecurityConfig(AuthenticationConfiguration authenticationConfiguration, JWTutil jwtUtil, SecurityUtil securityUtil, BaseUtil baseUtil) {
         this.authenticationConfiguration = authenticationConfiguration;
         this.jwtUtil = jwtUtil;
         this.securityUtil = securityUtil;
+        this.baseUtil = baseUtil;
     }
 
 
@@ -53,7 +56,7 @@ public class SecurityConfig {
                         .requestMatchers("/swagger-ui/**", "/swagger-ui.html", "/v3/api-docs/**", "/swagger-resources/**").permitAll()
                         .requestMatchers("/user/login", "/user/signup").permitAll()
                         .anyRequest().authenticated())
-                .addFilterBefore(new LoginFilter(authenticationManager(authenticationConfiguration), jwtUtil, securityUtil), UsernamePasswordAuthenticationFilter.class)
+                .addFilterBefore(new LoginFilter(authenticationManager(authenticationConfiguration), jwtUtil, securityUtil, baseUtil), UsernamePasswordAuthenticationFilter.class)
         ;
         return http.build();
     }
@@ -61,12 +64,6 @@ public class SecurityConfig {
     @Bean
     public BCryptPasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
-    }
-
-    @Bean
-    public UserDetailsService userDetailsService(){
-        UserDetails user = User.withUsername("user").password("1111").roles("USER").build();
-        return new InMemoryUserDetailsManager(user);
     }
 
 }

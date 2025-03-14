@@ -2,6 +2,7 @@ package com.example.pl_lab_server.User.controller;
 
 import com.example.pl_lab_server.User.Dto.UserLoginDto;
 import com.example.pl_lab_server.User.Dto.UserSignUpDto;
+import com.example.pl_lab_server.User.Dto.UserUpdateDto;
 import com.example.pl_lab_server.User.application.UserAuthentication;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -34,6 +35,17 @@ public class AuthUserController {
     public ResponseEntity<?> UserSignUp(@RequestPart(value = "user") UserSignUpDto userSignUpDto
                                         ,@RequestPart(value = "image", required = false) MultipartFile file){
         return userAuthentication.UserSignUp(userSignUpDto, file);
+    }
+
+    @Operation(summary = "회원수정 api", description = "유저 정보를 수정합니다")
+    @PutMapping(
+            value = "/update",
+            consumes = {MediaType.MULTIPART_FORM_DATA_VALUE}
+    )
+    public ResponseEntity<?> UserUpdate(@RequestPart(value = "user")UserUpdateDto userUpdateDto
+            , @RequestPart(value = "image", required = false) MultipartFile file,
+                                        HttpServletRequest request){
+        return userAuthentication.UserUpdate(userUpdateDto, file, request);
     }
 
 }

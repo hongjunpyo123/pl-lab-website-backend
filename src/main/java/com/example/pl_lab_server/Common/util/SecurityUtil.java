@@ -3,6 +3,7 @@ package com.example.pl_lab_server.Common.util;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.Getter;
 import lombok.Setter;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 
@@ -18,12 +19,13 @@ import java.util.Base64;
 public class SecurityUtil {
     LocalDateTime now = LocalDateTime.now();
     DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+    @Value("${encrypt.key}")String key;
 
     LocalDate today = LocalDate.now();
     String todayANDtime = now.format(formatter);
 
 
-    public String encrypt(String text, String key) { //문자열 암호화
+    public String encrypt(String text) { //문자열 암호화
         try {
             // 키를 16바이트로 포맷팅 (AES-128용)
             key = String.format("%-16s", key).substring(0, 16);
@@ -59,7 +61,7 @@ public class SecurityUtil {
         }
     }
 
-    public String decrypt(String encryptedText, String key) { //문자열 복호화
+    public String decrypt(String encryptedText) { //문자열 복호화
         try {
             // 키를 16바이트로 포맷팅
             key = String.format("%-16s", key).substring(0, 16);
@@ -124,6 +126,54 @@ public class SecurityUtil {
         }
         // IPv4가 아닌 경우 로컬호스트 IP 반환
         return "127.0.0.1";
+    }
+
+    public String SimpleEncrypt(String text) {
+        if (text == null) return null;
+        final int KEY = 7;
+        final byte[] XOR_MASK = {0x3A, 0x7B, 0x5E, 0x2D};
+
+        StringBuilder encrypted = new StringBuilder();
+        int xorIndex = 0;
+        int position = 0;
+
+        for (char c : text.toCharArray()) {
+            int value = (int) c;
+            value = value ^ XOR_MASK[xorIndex];
+            xorIndex = (xorIndex + 1) % XOR_MASK.length;
+            int positionShift = position % 5;
+            position++;
+            int shifted = ((value + KEY + positionShift) % 256);
+            encrypted.append(String.format("%03d", shifted));
+        }
+
+        return encrypted.toString();
+    }
+
+    public String SimpleDecrypt(String encrypted) {
+        if (encrypted == null) return null;
+        final int KEY = 7;
+        final byte[] XOR_MASK = {0x3A, 0x7B, 0x5E, 0x2D};
+
+        StringBuilder decrypted = new StringBuilder();
+        int xorIndex = 0;
+        int position = 0;
+
+        for (int i = 0; i < encrypted.length(); i += 3) {
+            if (i + 3 > encrypted.length()) break;
+
+            int num = Integer.parseInt(encrypted.substring(i, i + 3));
+            int positionShift = position % 5;
+            position++;
+            int value = ((num - KEY - positionShift + 256) % 256);
+            value = value ^ XOR_MASK[xorIndex];
+            xorIndex = (xorIndex + 1) % XOR_MASK.length;
+
+            char c = (char) value;
+            decrypted.append(c);
+        }
+
+        return decrypted.toString();
     }
 
 

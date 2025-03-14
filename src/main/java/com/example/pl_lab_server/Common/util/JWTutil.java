@@ -17,8 +17,6 @@ public class JWTutil {
     @Autowired
     SecurityUtil securityUtil;
 
-    @Value("${encrypt.key}")String encryptKey;
-
     private SecretKey secretKey;
 
     public JWTutil(@Value("${spring.jwt.secret}")String secret){
@@ -26,26 +24,31 @@ public class JWTutil {
     }
 
     public String getUsername(String token){
-        return securityUtil.decrypt(Jwts.parser().verifyWith(secretKey).build().parseSignedClaims(token).getPayload().get("username", String.class), encryptKey);
+        return securityUtil.decrypt(Jwts.parser().verifyWith(secretKey).build().parseSignedClaims(token).getPayload().get(securityUtil.SimpleEncrypt("mn"), String.class));
     }
 
     public String getRole(String token){
-        return securityUtil.decrypt(Jwts.parser().verifyWith(secretKey).build().parseSignedClaims(token).getPayload().get("role", String.class), encryptKey);
+        return securityUtil.decrypt(Jwts.parser().verifyWith(secretKey).build().parseSignedClaims(token).getPayload().get(securityUtil.SimpleEncrypt("rn"), String.class));
     }
 
     public String getIp(String token){
-        return securityUtil.decrypt(Jwts.parser().verifyWith(secretKey).build().parseSignedClaims(token).getPayload().get("ip", String.class), encryptKey);
+        return securityUtil.decrypt(Jwts.parser().verifyWith(secretKey).build().parseSignedClaims(token).getPayload().get(securityUtil.SimpleEncrypt("pn"), String.class));
+    }
+
+    public String getEmail(String token){
+        return securityUtil.decrypt(Jwts.parser().verifyWith(secretKey).build().parseSignedClaims(token).getPayload().get(securityUtil.SimpleEncrypt("me"), String.class));
     }
 
     public Boolean isExpired(String token){
         return Jwts.parser().verifyWith(secretKey).build().parseSignedClaims(token).getPayload().getExpiration().before(new Date());
     }
 
-    public String createToken(String username, String role, Long expiredms, String ip){
+    public String createToken(String username, String role, Long expiredms, String ip, String email){
         return Jwts.builder()
-                .claim("username", securityUtil.encrypt(username, encryptKey))
-                .claim("role", securityUtil.encrypt(role, encryptKey))
-                .claim("ip", securityUtil.encrypt(ip, encryptKey))
+                .claim(securityUtil.SimpleEncrypt("mn"), securityUtil.encrypt(username))
+                .claim(securityUtil.SimpleEncrypt("rn"), securityUtil.encrypt(role))
+                .claim(securityUtil.SimpleEncrypt("pn"), securityUtil.encrypt(ip))
+                .claim(securityUtil.SimpleEncrypt("me"), securityUtil.encrypt(email))
                 .issuedAt(new Date(System.currentTimeMillis()))
                 .expiration(new Date(System.currentTimeMillis() + expiredms))
                 .signWith(secretKey)

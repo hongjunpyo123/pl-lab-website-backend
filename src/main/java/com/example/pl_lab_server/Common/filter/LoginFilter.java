@@ -1,6 +1,7 @@
 package com.example.pl_lab_server.Common.filter;
 
 import com.example.pl_lab_server.Common.response.ResponseDto;
+import com.example.pl_lab_server.Common.util.BaseUtil;
 import com.example.pl_lab_server.Common.util.JWTutil;
 import com.example.pl_lab_server.Common.util.SecurityUtil;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -8,8 +9,10 @@ import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.AuthenticationServiceException;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -26,17 +29,19 @@ import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
 import java.util.*;
-
+@Slf4j
 public class LoginFilter extends OncePerRequestFilter {
     private final AuthenticationManager authenticationManager;
 
     private final JWTutil jwTutil;
     private final SecurityUtil securityUtil;
+    private final BaseUtil baseUtil;
 
-    public LoginFilter(AuthenticationManager authenticationManager, JWTutil jwtUtil, SecurityUtil securityUtil){
+    public LoginFilter(AuthenticationManager authenticationManager, JWTutil jwtUtil, SecurityUtil securityUtil, BaseUtil baseUtil){
         this.authenticationManager = authenticationManager;
         this.jwTutil = jwtUtil;
         this.securityUtil = securityUtil;
+        this.baseUtil = baseUtil;
     }
 
     private void handleAuthenticationError(HttpServletResponse response, String errorMessage) throws IOException {
@@ -44,9 +49,10 @@ public class LoginFilter extends OncePerRequestFilter {
         response.setContentType("application/json;charset=UTF-8");
 
         Map<String, Object> errorResponse = new HashMap<>();
-        errorResponse.put("status", "error");
-        errorResponse.put("message", errorMessage);
-        errorResponse.put("timestamp", new Date());
+        errorResponse.put("status", HttpStatus.UNAUTHORIZED);
+        errorResponse.put("message", "인증 실패");
+        log.error("인증 실패: " + errorMessage);
+        log.error("timestamp: " + new Date());
 
         ObjectMapper objectMapper = new ObjectMapper();
         String jsonResponse = objectMapper.writeValueAsString(errorResponse);
@@ -61,7 +67,7 @@ public class LoginFilter extends OncePerRequestFilter {
 
         // JWT 토큰 검증 로직
         if (token == null || !token.startsWith("Bearer ")) {
-            System.out.println("JWT 토큰이 없거나 형식이 잘못되었습니다.");
+            log.info("인증 거부, 토큰 없음, : " + securityUtil.getClientIpv4(request));
             filterChain.doFilter(request, response);
             return;
         }

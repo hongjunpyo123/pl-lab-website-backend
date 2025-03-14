@@ -20,25 +20,25 @@ public class UserEntity {
     @Column(length = 255)
     private String userPw;
 
-    @Column(length = 8)
+    @Column(length = 255)
     private String stdNo;
 
-    @Column(length = 20)
+    @Column(length = 255)
     private String regDt;
 
-    @Column(length = 20)
+    @Column(length = 255)
     private String gradDt;
 
-    @Column(length = 10)
+    @Column(length = 255)
     private String usreName;
 
-    @Column(length = 15)
+    @Column(length = 255)
     private String userPhone;
 
     @Column(length = 255)
     private String userImageURL;
 
-    @Column(length = 10)
+    @Column(length = 255)
     private String type;
 
 
