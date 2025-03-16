@@ -31,7 +31,7 @@ public class AuthUserController {
 
     @Operation(summary = "회원가입 api", description =
             "유저 정보를 등록후 성공 메시지 반환 " +
-            "(USER = 일반 사용자 / ADMIN = 관리자 / GUEST = 게스트 사용자)")
+            "(이미지는 선택사항이며, 호출에는 GUEST 권한이 필요합니다)")
     @PostMapping(
             value = "/signup",
             consumes = {MediaType.MULTIPART_FORM_DATA_VALUE}
