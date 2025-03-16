@@ -55,7 +55,7 @@ public class SecurityConfig {
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/swagger-ui/**", "/swagger-ui.html", "/v3/api-docs/**", "/swagger-resources/**").permitAll()
                         .requestMatchers("/user/login", "/user/check").permitAll()
-                        .requestMatchers("/user/update", "/user/delete").hasAnyRole("USER", "ADMIN")
+                        .requestMatchers("/user/update", "/user/delete", "/admin/signup", "/admin/signup/auth").hasAnyRole("USER", "ADMIN")
                         .requestMatchers("/user/signup").hasAnyRole("GUEST", "ADMIN")
                         .anyRequest().hasRole("ADMIN"))
                 .addFilterBefore(new LoginFilter(authenticationManager(authenticationConfiguration), jwtUtil, securityUtil, baseUtil), UsernamePasswordAuthenticationFilter.class)
