@@ -17,6 +17,8 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -122,7 +124,7 @@ public class UserAuthentication {
 
             userSignUpDto.setGradDt(null);
             userSignUpDto.setUserPw(hash.encode(userSignUpDto.getUserPw()));
-            userSignUpDto.setType(securityUtil.encrypt("ROLE_USER")); //사용자 권한 암호화
+            userSignUpDto.setType(securityUtil.encrypt(userSignUpDto.getType())); //사용자 권한 암호화
             userRepository.save(userSignUpDto.toEntity());
             return ResponseEntity
                     .ok(ResponseDto.response(HttpStatus.OK, "회원가입에 성공하였습니다", null));
@@ -196,4 +198,31 @@ public class UserAuthentication {
                     .body(ResponseDto.response(HttpStatus.BAD_REQUEST, "조회된 유저가 없습니다", null));
         }
     }
+
+    public ResponseEntity<?> UserCheck(HttpServletRequest request){
+        String token = request.getHeader("Authorization");
+        if (token == null || !token.startsWith("Bearer ")) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                    .body(ResponseDto
+                            .response(HttpStatus.UNAUTHORIZED, "토큰이 존재하지 않습니다. 게스트 유저 토큰 발급", jwTutil
+                                    .createToken(
+                                            "Guest",
+                                            "GUEST",
+                                            this.expirationTime,
+                                            securityUtil.getClientIpv4(request),
+                                            "GUEST@GUEST.GUEST"
+                                    )));
+        } else { //토큰이 헤더에 존재할 경우
+            token = token.substring(7); // "Bearer " 제거
+            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+            if(authentication == null || !authentication.isAuthenticated()){ //인증되지 않은 토큰일 경우
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                        .body(ResponseDto.response(HttpStatus.UNAUTHORIZED, "토큰이 유효하지 않습니다", null));
+            } else { //인증된 토큰일 경우
+                return ResponseEntity.ok(ResponseDto.response(HttpStatus.OK, "인증이 완료되었습니다", jwTutil.getEmail(token)));
+            }
+        }
+    }
+
+
 }

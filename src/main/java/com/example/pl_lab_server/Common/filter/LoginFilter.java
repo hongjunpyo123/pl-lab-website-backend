@@ -49,8 +49,8 @@ public class LoginFilter extends OncePerRequestFilter {
         response.setContentType("application/json;charset=UTF-8");
 
         Map<String, Object> errorResponse = new HashMap<>();
-        errorResponse.put("status", HttpStatus.UNAUTHORIZED);
         errorResponse.put("message", "인증 실패");
+        errorResponse.put("status", HttpStatus.UNAUTHORIZED);
         log.error("인증 실패: " + errorMessage);
         log.error("timestamp: " + new Date());
 

@@ -27,7 +27,9 @@ public class AuthUserController {
         return userAuthentication.UserLogin(userLoginDto, request);
     }
 
-    @Operation(summary = "회원가입 api", description = "유저 정보를 등록후 성공 메시지 반환")
+    @Operation(summary = "회원가입 api", description =
+            "유저 정보를 등록후 성공 메시지 반환 " +
+            "(USER = 일반 사용자 / ADMIN = 관리자 / GUEST = 게스트 사용자)")
     @PostMapping(
             value = "/signup",
             consumes = {MediaType.MULTIPART_FORM_DATA_VALUE}
@@ -47,5 +49,12 @@ public class AuthUserController {
                                         HttpServletRequest request){
         return userAuthentication.UserUpdate(userUpdateDto, file, request);
     }
+
+    @Operation(summary = "jwt 유효성 검증 api", description = "웹페이지 접속 시 호출되는 api입니다. jwt토큰이 없을 시 게스트 사용자로 인식하고 토큰을 발급합니다")
+    @GetMapping("/check")
+    public ResponseEntity<?> UserCheck(HttpServletRequest request){
+        return userAuthentication.UserCheck(request);
+    }
+
 
 }
