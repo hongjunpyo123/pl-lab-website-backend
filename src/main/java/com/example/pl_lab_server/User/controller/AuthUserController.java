@@ -6,6 +6,7 @@ import com.example.pl_lab_server.User.Dto.UserSignUpDto;
 import com.example.pl_lab_server.User.Dto.UserUpdateDto;
 import com.example.pl_lab_server.User.application.UserAuthentication;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -58,9 +59,9 @@ public class AuthUserController {
     }
 
 
-    @Operation(summary = "회원삭제 api", description = "유저 정보를 삭제합니다")
+    @Operation(summary = "회원삭제 api", description = "유저 정보를 삭제합니다", security = @SecurityRequirement(name = "bearerAuth"))
     @DeleteMapping("/delete")
-    public ResponseEntity<?> UserDelete(UserDeleteDto userDeleteDto){
+    public ResponseEntity<?> UserDelete(@RequestBody UserDeleteDto userDeleteDto){
         return userAuthentication.UserDelete(userDeleteDto);
     }
 

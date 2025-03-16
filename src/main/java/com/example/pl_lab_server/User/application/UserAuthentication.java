@@ -231,9 +231,16 @@ public class UserAuthentication {
     @Transactional
     public ResponseEntity<?> UserDelete(UserDeleteDto userDeleteDto){
         if(userRepository.existsByUserEmail(userDeleteDto.getUserEmail())){
-            userRepository.deleteByUserEmail(userDeleteDto.getUserEmail());
-            return ResponseEntity
-                    .ok(ResponseDto.response(HttpStatus.OK, "삭제에 성공하였습니다", userDeleteDto.getUserEmail()));
+            UserEntity userEntity = userRepository.findByUserEmail(userDeleteDto.getUserEmail());
+            //비밀번호 검증 로직
+            if(!hash.matches(userDeleteDto.getUserPw(), userEntity.getUserPw())){
+                    return ResponseEntity.badRequest()
+                            .body(ResponseDto.response(HttpStatus.BAD_REQUEST, "비밀번호가 일치하지 않습니다", null));
+            } else {
+                userRepository.deleteByUserEmail(userDeleteDto.getUserEmail());
+                return ResponseEntity
+                        .ok(ResponseDto.response(HttpStatus.OK, "삭제에 성공하였습니다", userDeleteDto.getUserEmail()));
+            }
         } else {
             return ResponseEntity.badRequest()
                     .body(ResponseDto.response(HttpStatus.BAD_REQUEST, "조회된 유저가 없습니다", null));
