@@ -24,8 +24,8 @@ public class SwaggerConfig {
                                         .name("Authorization"))
                 )
                 .info(new Info()
-                        .title("API 제목")
-                        .description("API 설명")
+                        .title("PL website API")
+                        .description("/login, /check 를 제외한 모든 API 호출에는 JWT 인증이 필요합니다.(role GUEST/USER/ADMIN)")
                         .version("1.0.0"))
                 .addSecurityItem(new SecurityRequirement().addList("bearerAuth"));
     }
