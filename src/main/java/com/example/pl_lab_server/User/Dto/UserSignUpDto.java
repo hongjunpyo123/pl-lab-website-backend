@@ -32,7 +32,7 @@ public class UserSignUpDto {
     @Schema(hidden = true)
     private String userImageURL;
 
-    @Schema(example = "USER")
+    @Schema(hidden = true)
     private String type;
 
     public UserEntity toEntity(){

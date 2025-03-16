@@ -46,7 +46,7 @@ public class JWTutil {
     public String createToken(String username, String role, Long expiredms, String ip, String email){
         return Jwts.builder()
                 .claim(securityUtil.SimpleEncrypt("mn"), securityUtil.encrypt(username))
-                .claim(securityUtil.SimpleEncrypt("rn"), securityUtil.encrypt(role))
+                .claim(securityUtil.SimpleEncrypt("rn"), securityUtil.encrypt("ROLE_"+role))
                 .claim(securityUtil.SimpleEncrypt("pn"), securityUtil.encrypt(ip))
                 .claim(securityUtil.SimpleEncrypt("me"), securityUtil.encrypt(email))
                 .issuedAt(new Date(System.currentTimeMillis()))

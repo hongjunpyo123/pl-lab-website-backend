@@ -52,7 +52,6 @@ public class UserEntity {
         userSignUpDto.setUsreName(this.usreName);
         userSignUpDto.setUserPhone(this.userPhone);
         userSignUpDto.setUserImageURL(this.userImageURL);
-        userSignUpDto.setType(this.type);
 
         return userSignUpDto;
     }

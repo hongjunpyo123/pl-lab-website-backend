@@ -26,6 +26,9 @@ public class SecurityUtil {
 
 
     public String encrypt(String text) { //문자열 암호화
+        if (text == null || text.isEmpty()) {
+            return null; // 또는 빈 문자열 반환
+        }
         try {
             // 키를 16바이트로 포맷팅 (AES-128용)
             key = String.format("%-16s", key).substring(0, 16);
@@ -62,6 +65,9 @@ public class SecurityUtil {
     }
 
     public String decrypt(String encryptedText) { //문자열 복호화
+        if (encryptedText == null || encryptedText.isEmpty()) {
+            return null; // 또는 빈 문자열 반환
+        }
         try {
             // 키를 16바이트로 포맷팅
             key = String.format("%-16s", key).substring(0, 16);

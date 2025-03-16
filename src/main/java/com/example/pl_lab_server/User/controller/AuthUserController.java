@@ -1,5 +1,6 @@
 package com.example.pl_lab_server.User.controller;
 
+import com.example.pl_lab_server.User.Dto.UserDeleteDto;
 import com.example.pl_lab_server.User.Dto.UserLoginDto;
 import com.example.pl_lab_server.User.Dto.UserSignUpDto;
 import com.example.pl_lab_server.User.Dto.UserUpdateDto;
@@ -21,7 +22,7 @@ public class AuthUserController {
     @Autowired
     UserAuthentication userAuthentication;
 
-    @Operation(summary = "로그인 api", description = "유저 정보를 조회하고 성공 시 JWT 토큰 반환")
+    @Operation(summary = "로그인 api", description = "유저 정보를 조회하고 성공 시 JWT 토큰 반환 / 해당 api호출 시 로컬스토리지에 저장된 기존 jwt토큰을 삭제해야합니다")
     @PostMapping("/login")
     public ResponseEntity<?> UserLogin(@RequestBody UserLoginDto userLoginDto, HttpServletRequest request){
         return userAuthentication.UserLogin(userLoginDto, request);
@@ -54,6 +55,13 @@ public class AuthUserController {
     @GetMapping("/check")
     public ResponseEntity<?> UserCheck(HttpServletRequest request){
         return userAuthentication.UserCheck(request);
+    }
+
+
+    @Operation(summary = "회원삭제 api", description = "유저 정보를 삭제합니다")
+    @DeleteMapping("/delete")
+    public ResponseEntity<?> UserDelete(UserDeleteDto userDeleteDto){
+        return userAuthentication.UserDelete(userDeleteDto);
     }
 
 

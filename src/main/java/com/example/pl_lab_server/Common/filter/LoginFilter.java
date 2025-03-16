@@ -95,7 +95,7 @@ public class LoginFilter extends OncePerRequestFilter {
             authenticationToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
 
             SecurityContextHolder.getContext().setAuthentication(authenticationToken);
-            System.out.println("인증 성공: " + username);
+            log.info("인증 성공: " + username + "/role: " + role + "/ip: " + accessIp);
 
         } catch (Exception e) {
             System.out.println("인증 실패: " + e.getMessage());

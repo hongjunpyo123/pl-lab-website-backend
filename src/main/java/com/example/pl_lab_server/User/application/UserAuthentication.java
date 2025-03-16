@@ -4,6 +4,7 @@ import com.example.pl_lab_server.Common.response.ResponseDto;
 import com.example.pl_lab_server.Common.util.BaseUtil;
 import com.example.pl_lab_server.Common.util.JWTutil;
 import com.example.pl_lab_server.Common.util.SecurityUtil;
+import com.example.pl_lab_server.User.Dto.UserDeleteDto;
 import com.example.pl_lab_server.User.Dto.UserLoginDto;
 import com.example.pl_lab_server.User.Dto.UserSignUpDto;
 import com.example.pl_lab_server.User.Dto.UserUpdateDto;
@@ -21,6 +22,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.ResourceLoader;
@@ -61,20 +63,22 @@ public class UserAuthentication {
                         .ok(ResponseDto
                                 .response(HttpStatus.OK, "로그인에 성공하였습니다", jwTutil
                                         .createToken(
-                                                userLoginDto.getUsreName(),
-                                                userEntity.getType(),
+                                                securityUtil.decrypt(userEntity.getUsreName()),
+                                                securityUtil.decrypt(userEntity.getType()),
                                                 this.expirationTime,
                                                 securityUtil.getClientIpv4(request),
-                                                userLoginDto.getUserEmail()
+                                                userEntity.getUserEmail()
 
                                         )));
             } else {
+                log.error("비밀번호가 일치하지 않습니다");
                 return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
-                        .body(ResponseDto.response(HttpStatus.UNAUTHORIZED, "비밀번호가 일치하지 않습니다", null));
+                        .body(ResponseDto.response(HttpStatus.UNAUTHORIZED, "로그인에 실패하였습니다.", null));
             }
         } else {
+            log.error("조회된 유저가 없습니다");
             return ResponseEntity.badRequest()
-                    .body(ResponseDto.response(HttpStatus.BAD_REQUEST, "조회된 유저가 없습니다", null));
+                    .body(ResponseDto.response(HttpStatus.BAD_REQUEST, "로그인에 실패하였습니다.", null));
         }
     }
 
@@ -124,7 +128,7 @@ public class UserAuthentication {
 
             userSignUpDto.setGradDt(null);
             userSignUpDto.setUserPw(hash.encode(userSignUpDto.getUserPw()));
-            userSignUpDto.setType(securityUtil.encrypt(userSignUpDto.getType())); //사용자 권한 암호화
+            userSignUpDto.setType(securityUtil.encrypt("USER")); //사용자 권한 암호화
             userRepository.save(userSignUpDto.toEntity());
             return ResponseEntity
                     .ok(ResponseDto.response(HttpStatus.OK, "회원가입에 성공하였습니다", null));
@@ -219,8 +223,20 @@ public class UserAuthentication {
                 return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
                         .body(ResponseDto.response(HttpStatus.UNAUTHORIZED, "토큰이 유효하지 않습니다", null));
             } else { //인증된 토큰일 경우
-                return ResponseEntity.ok(ResponseDto.response(HttpStatus.OK, "인증이 완료되었습니다", jwTutil.getEmail(token)));
+                return ResponseEntity.ok(ResponseDto.response(HttpStatus.OK, "인증이 완료되었습니다", jwTutil.getUsername(token)));
             }
+        }
+    }
+
+    @Transactional
+    public ResponseEntity<?> UserDelete(UserDeleteDto userDeleteDto){
+        if(userRepository.existsByUserEmail(userDeleteDto.getUserEmail())){
+            userRepository.deleteByUserEmail(userDeleteDto.getUserEmail());
+            return ResponseEntity
+                    .ok(ResponseDto.response(HttpStatus.OK, "삭제에 성공하였습니다", userDeleteDto.getUserEmail()));
+        } else {
+            return ResponseEntity.badRequest()
+                    .body(ResponseDto.response(HttpStatus.BAD_REQUEST, "조회된 유저가 없습니다", null));
         }
     }
 
