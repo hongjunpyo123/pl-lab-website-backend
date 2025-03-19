@@ -82,5 +82,93 @@ public class HtmlTemplateUtil {
     }
 
 
+    public String createApplicationCompletionEmailTemplate(String username) {
+        return "<!DOCTYPE html>\n" +
+                "<html>\n" +
+                "<head>\n" +
+                "    <meta charset=\"UTF-8\">\n" +
+                "    <title>PL Lab 지원 완료 안내</title>\n" +
+                "    <style>\n" +
+                "        body {\n" +
+                "            font-family: 'Arial', sans-serif;\n" +
+                "            line-height: 1.6;\n" +
+                "            color: #333;\n" +
+                "            max-width: 600px;\n" +
+                "            margin: 0 auto;\n" +
+                "            padding: 20px;\n" +
+                "        }\n" +
+                "        .container {\n" +
+                "            border: 1px solid #ddd;\n" +
+                "            border-radius: 5px;\n" +
+                "            padding: 20px;\n" +
+                "            background-color: #f9f9f9;\n" +
+                "        }\n" +
+                "        .header {\n" +
+                "            text-align: center;\n" +
+                "            padding-bottom: 10px;\n" +
+                "            border-bottom: 2px solid #6366f1;\n" +
+                "            margin-bottom: 20px;\n" +
+                "        }\n" +
+                "        .success-icon {\n" +
+                "            font-size: 48px;\n" +
+                "            text-align: center;\n" +
+                "            color: #10b981;\n" +
+                "            margin: 20px 0;\n" +
+                "        }\n" +
+                "        .message {\n" +
+                "            font-size: 18px;\n" +
+                "            text-align: center;\n" +
+                "            padding: 15px;\n" +
+                "            margin: 15px 0;\n" +
+                "            background-color: #f0f9ff;\n" +
+                "            border-radius: 5px;\n" +
+                "        }\n" +
+                "        .next-steps {\n" +
+                "            background-color: #f5f3ff;\n" +
+                "            border-left: 4px solid #6366f1;\n" +
+                "            padding: 15px;\n" +
+                "            margin: 20px 0;\n" +
+                "        }\n" +
+                "        .footer {\n" +
+                "            text-align: center;\n" +
+                "            margin-top: 30px;\n" +
+                "            font-size: 12px;\n" +
+                "            color: #777;\n" +
+                "        }\n" +
+                "    </style>\n" +
+                "</head>\n" +
+                "<body>\n" +
+                "    <div class=\"container\">\n" +
+                "        <div class=\"header\">\n" +
+                "            <h2>PL Lab 지원 완료 안내</h2>\n" +
+                "        </div>\n" +
+                "        \n" +
+                "        <div class=\"success-icon\">✓</div>\n" +
+                "        \n" +
+                "        <p>안녕하세요, <strong>" + username + "</strong>님</p>\n" +
+                "        \n" +
+                "        <div class=\"message\">\n" +
+                "            PL Lab 지원이 성공적으로 완료되었습니다.\n" +
+                "        </div>\n" +
+                "        <div class=\"next-steps\">\n" +
+                "            <h3>다음 단계</h3>\n" +
+                "            <p>1. 서류 심사 결과는 개별적으로 이메일을 통해 안내될 예정입니다.</p>\n" +
+                "            <p>2. 서류 합격자에 한해 면접 일정이 공지됩니다.</p>\n" +
+                "            <p>3. 최종 합격 여부는 면접 이후 개별 연락 드립니다.</p>\n" +
+                "        </div>\n" +
+                "        \n" +
+                "        <p>지원 과정에서 문의사항이 있으시면 이 이메일로 바로 회신해 주시기 바랍니다.</p>\n" +
+                "        \n" +
+                "        <div class=\"footer\">\n" +
+                "            <p>&copy; Programming Language Lab.</p>\n" +
+                "        </div>\n" +
+                "    </div>\n" +
+                "</body>\n" +
+                "</html>";
+    }
+
+
+
+
 
 }
