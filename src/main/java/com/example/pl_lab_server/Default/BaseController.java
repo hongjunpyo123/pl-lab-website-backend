@@ -11,6 +11,11 @@ public class BaseController {
         return "apply";
     }
 
+    @GetMapping("/apply/suc")
+    public String applySuc(){
+        return "applySuc";
+    }
+
     @GetMapping("/admin/apply/history")
     public String adminApply(){
         return "adminApply";

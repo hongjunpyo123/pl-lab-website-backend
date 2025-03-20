@@ -13,6 +13,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Slf4j
 @Service
 public class ApplyResponse {
@@ -41,6 +43,28 @@ public class ApplyResponse {
             log.error(e.getMessage());
             return ResponseEntity.badRequest()
                     .body(ResponseDto.response(HttpStatus.BAD_REQUEST, "응답 기록에 실패하였습니다", null));
+        }
+    }
+
+    public ResponseEntity<?> GetResponse(String applicantStdNo){
+        try {
+            if(applyResponseRepository.existsByApplicantStdNo(securityUtil.SimpleEncrypt(applicantStdNo))){
+                List<ApplyResponseEntity> applyResponseEntityList = applyResponseRepository.findByApplicantStdNo(securityUtil.SimpleEncrypt(applicantStdNo));
+
+                for (ApplyResponseEntity entity : applyResponseEntityList) {
+                    entity.setApplicantResponse(securityUtil.decrypt(entity.getApplicantResponse()));
+                    entity.setApplicantStdNo(securityUtil.SimpleDecrypt(entity.getApplicantStdNo()));
+                }
+
+                return ResponseEntity.ok()
+                        .body(ResponseDto.response(HttpStatus.OK, "조회에 성공하였습니다.", applyResponseEntityList));
+            } else {
+                return ResponseEntity.badRequest()
+                        .body(ResponseDto.response(HttpStatus.BAD_REQUEST, "답변이 존재하지 않습니다", null));
+            }
+        } catch (Exception e){
+            log.error(e.getMessage());
+            return ResponseEntity.badRequest().body(ResponseDto.response(HttpStatus.BAD_REQUEST, "조회에 실패하였습니다", null));
         }
     }
 }

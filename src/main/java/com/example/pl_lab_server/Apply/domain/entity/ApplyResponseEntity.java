@@ -20,7 +20,7 @@ public class ApplyResponseEntity {
     @Column(length = 255)
     private String questionId;
 
-    @Column(length = 1000)
+    @Column(length = 10000)
     private String applicantResponse;
 
 }

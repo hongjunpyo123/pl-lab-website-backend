@@ -1,0 +1,340 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>PL Lab 지원 완료</title>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&family=Noto+Sans+KR:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --naver-green: #03c75a;
+            --naver-green-dark: #009f47;
+            --naver-gray: #8e8e8e;
+            --naver-light-gray: #f5f6f7;
+            --naver-border: #e6e6e6;
+            --naver-text: #333333;
+            --naver-error: #ff3a35;
+            --naver-background: #f9f9f9;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Noto Sans KR', 'Apple SD Gothic Neo', sans-serif;
+        }
+
+        h1, h2, h3, .button {
+            font-family: 'Montserrat', 'Noto Sans KR', sans-serif;
+        }
+
+        body {
+            background-color: var(--naver-background);
+            color: var(--naver-text);
+            line-height: 1.6;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            padding: 20px 0;
+        }
+
+        .container {
+            max-width: 700px;
+            margin: 0 auto;
+            padding: 0 15px;
+            width: 100%;
+            box-sizing: border-box;
+            opacity: 0;
+            animation: pageLoad 0.3s ease-out forwards;
+        }
+
+        @keyframes pageLoad {
+            0% {
+                opacity: 0;
+            }
+            100% {
+                opacity: 1;
+            }
+        }
+
+        .success-card {
+            background-color: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+            overflow: hidden;
+            position: relative;
+        }
+
+        .success-header {
+            background-color: var(--naver-green);
+            color: white;
+            padding: 35px 20px;
+            text-align: center;
+            position: relative;
+        }
+
+        .success-header h1 {
+            font-size: 28px;
+            font-weight: 700;
+            margin-bottom: 8px;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.15);
+            letter-spacing: 0.5px;
+        }
+
+        .success-header p {
+            font-size: 17px;
+            color: rgba(255, 255, 255, 0.95);
+            font-weight: 400;
+            letter-spacing: 0.3px;
+        }
+
+        .success-icon-wrapper {
+            position: relative;
+            width: 100px;
+            height: 100px;
+            margin: -50px auto 25px;
+            z-index: 10;
+        }
+
+        .success-icon {
+            width: 100px;
+            height: 100px;
+            background-color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            position: relative;
+            z-index: 1;
+        }
+
+        .success-icon-circle {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            background-color: var(--naver-green);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transform: scale(0);
+            animation: circleAppear 0.35s ease forwards 0.2s;
+        }
+
+        .success-icon svg {
+            width: 40px;
+            height: 40px;
+            color: white;
+            transform: scale(0);
+            opacity: 0;
+            animation: checkAppear 0.35s ease forwards 0.55s;
+        }
+
+        @keyframes circleAppear {
+            0% {
+                transform: scale(0);
+            }
+            60% {
+                transform: scale(1.1);
+            }
+            100% {
+                transform: scale(1);
+            }
+        }
+
+        @keyframes checkAppear {
+            0% {
+                transform: scale(0) rotate(-45deg);
+                opacity: 0;
+            }
+            70% {
+                transform: scale(1.2) rotate(0);
+                opacity: 1;
+            }
+            100% {
+                transform: scale(1) rotate(0);
+                opacity: 1;
+            }
+        }
+
+        .success-content {
+            padding: 0 40px 40px;
+            text-align: center;
+        }
+
+        .success-title {
+            font-size: 24px;
+            font-weight: 600;
+            color: var(--naver-text);
+            margin-bottom: 15px;
+            letter-spacing: 0.5px;
+        }
+
+        .success-message {
+            color: #4b5563;
+            margin-bottom: 30px;
+            font-size: 16px;
+            line-height: 1.7;
+        }
+
+        .info-box {
+            background-color: #f8fafc;
+            border-radius: 12px;
+            padding: 30px;
+            margin-bottom: 30px;
+            text-align: left;
+            border: 1px solid #e2e8f0;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .info-box:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.05);
+        }
+
+        .info-box:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.05);
+        }
+
+        .info-title {
+            font-weight: 600;
+            color: var(--naver-green);
+            margin-bottom: 20px;
+            font-size: 18px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .info-title svg {
+            width: 20px;
+            height: 20px;
+        }
+
+        .info-list {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .info-item {
+            font-size: 15px;
+            color: #4b5563;
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+            transition: transform 0.3s ease;
+        }
+
+        .info-item:hover {
+            transform: translateX(5px);
+        }
+
+        .info-item-dot {
+            color: var(--naver-green);
+            font-weight: bold;
+            margin-top: 2px;
+        }
+
+        .back-button {
+            display: inline-block;
+            background-color: var(--naver-green);
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background-color 0.2s, transform 0.3s, box-shadow 0.3s;
+            margin-top: 10px;
+            box-shadow: 0 4px 6px rgba(3, 199, 90, 0.2);
+            text-decoration: none;
+            letter-spacing: 0.5px;
+        }
+
+        .back-button:hover {
+            background-color: var(--naver-green-dark);
+            transform: translateY(-3px);
+            box-shadow: 0 8px 15px rgba(3, 199, 90, 0.3);
+        }
+
+        @media (max-width: 640px) {
+            .success-header h1 {
+                font-size: 22px;
+            }
+
+            .success-header p {
+                font-size: 15px;
+            }
+
+            .success-title {
+                font-size: 20px;
+            }
+
+            .success-content {
+                padding: 0 20px 30px;
+            }
+
+            .info-box {
+                padding: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <div class="success-card">
+        <div class="success-header">
+            <h1>PL Lab</h1>
+            <p>2025학년도 연구원 모집 지원서</p>
+        </div>
+
+        <div class="success-icon-wrapper">
+            <div class="success-icon">
+                <div class="success-icon-circle">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7" />
+                    </svg>
+                </div>
+            </div>
+        </div>
+
+        <div class="success-content">
+            <h2 class="success-title">지원이 성공적으로 완료되었습니다</h2>
+            <p class="success-message">
+                PL Lab에 관심을 가져주셔서 감사합니다.<br>
+                귀하의 지원서가 정상적으로 접수되었습니다.
+            </p>
+
+            <div class="info-box">
+                <div class="info-title">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                    다음 절차 안내
+                </div>
+                <div class="info-list">
+                    <div class="info-item">
+                        <span class="info-item-dot">•</span>
+                        <span>서류 심사 결과는 지원서에 기재한 이메일로 개별 안내됩니다.</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-item-dot">•</span>
+                        <span>서류 심사 합격자에 한해 면접 일정이 안내될 예정입니다.</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-item-dot">•</span>
+                        <span>지원 관련 문의사항은 pllab1004@gmail.com 으로 연락 주시기 바랍니다.</span>
+                    </div>
+                </div>
+            </div>
+
+
+        </div>
+    </div>
+</div>
+</body>
+</html>

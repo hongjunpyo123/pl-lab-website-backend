@@ -75,10 +75,28 @@ public class ApplyController {
         return applyPersonalInfoManage.AddPersonalInfo(applyPersonalInfoDto);
     }
 
+    @Operation(summary = "지원자 개인정보 삭제 api", description = "현재 지원한 지원자를 삭제합니다.")
+    @DeleteMapping("/personal")
+    public ResponseEntity<?> DeletePersonalInfo(@RequestBody ApplyDeletePersonalInfoDto applyDeletePersonalInfoDto){
+        return applyPersonalInfoManage.DeletePersonalInfo(applyDeletePersonalInfoDto);
+    }
+
+    @Operation(summary = "지원자 개인정보 조회(특정) api", description = "특정 지원자의 개인정보를 조회하는 api입니다.")
+    @GetMapping("/personal/{applicantStdNo}")
+    public ResponseEntity<?> GetPersonalInfo(@PathVariable String applicantStdNo){
+        return applyPersonalInfoManage.GetPersonalInfo(applicantStdNo);
+    }
+
     @Operation(summary = "지원자 응답 등록 api", description = "지원자가 질문에 응답한 내용을 등록하는 api입니다.")
     @PostMapping("/response/add")
     public ResponseEntity<?> AddResponse(@RequestBody ApplyResponseDto applyResponseDto){
         return applyResponse.AddResponse(applyResponseDto);
+    }
+
+    @Operation(summary = "지원자 응답 조회(특정) api", description = "지원자의 답변을 조회합니다.")
+    @GetMapping("/response/{applicantStdNo}")
+    public ResponseEntity<?> GetResponse(@PathVariable String applicantStdNo){
+        return applyResponse.GetResponse(applicantStdNo);
     }
 
     @Operation(summary = "지원 내역(전부) 조회 api 입니다.", description = "지원자의 지원 내역을 전부 조회하는 api입니다.")

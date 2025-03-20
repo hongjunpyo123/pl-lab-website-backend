@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
 
 import java.util.Arrays;
@@ -21,6 +22,7 @@ public class MailUtil {
 
     private String[] recipients = {};
 
+    @Async
     public void sendEmail(String to, String subject, String text) {
         SimpleMailMessage message = new SimpleMailMessage();
 
@@ -31,6 +33,7 @@ public class MailUtil {
         emailSender.send(message);
     }
 
+    @Async
     public void sendHtmlEmail(String[] to, String subject, String htmlContent) throws MessagingException {
         MimeMessage message = emailSender.createMimeMessage();
         MimeMessageHelper helper = new MimeMessageHelper(message, true, "UTF-8");
