@@ -3,6 +3,7 @@ package com.example.pl_lab_server.Admin.application;
 import com.example.pl_lab_server.Common.auth.GlobalAuthenticationManager;
 import com.example.pl_lab_server.Common.response.ResponseDto;
 import com.example.pl_lab_server.Common.util.*;
+import com.example.pl_lab_server.User.Dto.UserLoginDto;
 import com.example.pl_lab_server.User.Dto.UserSignUpDto;
 import com.example.pl_lab_server.User.domain.entity.UserEntity;
 import com.example.pl_lab_server.User.domain.repository.UserRepository;
@@ -42,6 +43,8 @@ public class AdminAuthentication {
 
         @Autowired
         private BCryptPasswordEncoder hash;
+
+        Long expirationTime = 3600000L;
 
         @Transactional
         public ResponseEntity<?> AdminSignUp(AdminSignUpDto adminSignUpDto){
@@ -105,6 +108,53 @@ public class AdminAuthentication {
             }
             return ResponseEntity.ok().body(ResponseDto
                     .response(HttpStatus.OK, "인증 메일 전송 성공", null));
+        }
+
+        public ResponseEntity<?> AdminLogin(UserLoginDto userLoginDto, HttpServletRequest request){
+            try {
+                String userEmail = userLoginDto.getUserEmail();
+
+                if(userRepository.existsByUserEmail(userEmail)){
+                    UserEntity userEntity = userRepository.findByUserEmail(userEmail);
+                    if(securityUtil.SimpleDecrypt(userEntity.getType()).equals("ADMIN")){
+
+
+                        if(hash.matches(userLoginDto.getUserPw(), userEntity.getUserPw())){
+                            log.info(userLoginDto.getUserEmail()+" 님이 어드민 페이지에 로그인 하였습니다.");
+                            return ResponseEntity
+                                    .ok(ResponseDto
+                                            .response(HttpStatus.OK, "로그인에 성공하였습니다", jwTutil
+                                                    .createToken(
+                                                            securityUtil.decrypt(userEntity.getUsreName()),
+                                                            securityUtil.SimpleDecrypt(userEntity.getType()),
+                                                            this.expirationTime,
+                                                            securityUtil.getClientIpv4(request),
+                                                            userEntity.getUserEmail()
+
+                                                    )));
+                        } else {
+                            log.error("비밀번호가 일치하지 않습니다");
+                            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                                    .body(ResponseDto.response(HttpStatus.UNAUTHORIZED, "로그인에 실패하였습니다.", null));
+                        }
+
+                    } else {
+                        log.error("어드민 권한이 아닙니다/" + securityUtil.SimpleDecrypt(userEntity.getType()) + "/" + userLoginDto.getUserEmail());
+                        return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                                .body(ResponseDto.response(HttpStatus.UNAUTHORIZED, "로그인에 실패하였습니다.", null));
+                    }
+                } else {
+                    log.error("일치하는 회원이 없습니다.");
+                    return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                            .body(ResponseDto.response(HttpStatus.UNAUTHORIZED, "로그인에 실패하였습니다.", null));
+                }
+
+
+            } catch (Exception e) {
+                log.error(e.getMessage());
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                        .body(ResponseDto.response(HttpStatus.UNAUTHORIZED, "로그인에 실패하였습니다.", null));
+            }
         }
     }
 

@@ -223,7 +223,7 @@ public class UserAuthentication {
                 return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
                         .body(ResponseDto.response(HttpStatus.UNAUTHORIZED, "토큰이 유효하지 않습니다", null));
             } else { //인증된 토큰일 경우
-                return ResponseEntity.ok(ResponseDto.response(HttpStatus.OK, "인증이 완료되었습니다", jwTutil.getUsername(token)));
+                return ResponseEntity.ok(ResponseDto.response(HttpStatus.OK, jwTutil.getRole(token), jwTutil.getUsername(token)));
             }
         }
     }

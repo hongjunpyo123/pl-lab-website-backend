@@ -84,6 +84,8 @@ public class LoginFilter extends OncePerRequestFilter {
             }
 
             if (!accessIp.equals(tokenIp)) {
+                log.error(tokenIp);
+                log.error(accessIp);
                 throw new BadCredentialsException("유효하지 않은 IP 주소");
             }
 

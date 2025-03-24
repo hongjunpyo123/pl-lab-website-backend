@@ -106,13 +106,13 @@ public class HtmlTemplateUtil {
                 "        .header {\n" +
                 "            text-align: center;\n" +
                 "            padding-bottom: 10px;\n" +
-                "            border-bottom: 2px solid #6366f1;\n" +
+                "            border-bottom: 2px solid #2c3e50;\n" +
                 "            margin-bottom: 20px;\n" +
                 "        }\n" +
                 "        .success-icon {\n" +
                 "            font-size: 48px;\n" +
                 "            text-align: center;\n" +
-                "            color: #10b981;\n" +
+                "            color: #27ae60;\n" +
                 "            margin: 20px 0;\n" +
                 "        }\n" +
                 "        .message {\n" +
@@ -120,12 +120,12 @@ public class HtmlTemplateUtil {
                 "            text-align: center;\n" +
                 "            padding: 15px;\n" +
                 "            margin: 15px 0;\n" +
-                "            background-color: #f0f9ff;\n" +
+                "            background-color: #e8f4fc;\n" +
                 "            border-radius: 5px;\n" +
                 "        }\n" +
                 "        .next-steps {\n" +
-                "            background-color: #f5f3ff;\n" +
-                "            border-left: 4px solid #6366f1;\n" +
+                "            background-color: #f1f5f9;\n" +
+                "            border-left: 4px solid #2c3e50;\n" +
                 "            padding: 15px;\n" +
                 "            margin: 20px 0;\n" +
                 "        }\n" +
@@ -166,7 +166,6 @@ public class HtmlTemplateUtil {
                 "</body>\n" +
                 "</html>";
     }
-
 
 
 

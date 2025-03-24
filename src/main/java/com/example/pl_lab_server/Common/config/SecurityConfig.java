@@ -54,9 +54,9 @@ public class SecurityConfig {
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/swagger-ui/**", "/swagger-ui.html", "/v3/api-docs/**", "/swagger-resources/**").permitAll()
-                        .requestMatchers("/user/login", "/user/check", "/apply/index",          "/apply/history/all", "/admin/apply/history", "/apply/suc", "/apply/personal", "/apply/personal/{applicantStdNo}", "/apply/response/{applicantStdNo}", "/apply/question/all").permitAll()
+                        .requestMatchers("/user/login","/admin/login", "/user/check", "/apply/index", "/admin/apply/history", "/apply/suc").permitAll()
                         .requestMatchers("/user/update", "/user/delete", "/admin/signup", "/admin/signup/auth").hasAnyRole("USER", "ADMIN")
-                        .requestMatchers("/user/signup", "/apply/personal/add", "/apply/response/add").hasAnyRole("GUEST", "ADMIN")
+                        .requestMatchers("/user/signup", "/apply/personal/add", "/apply/response/add", "/apply/question/all").hasAnyRole("GUEST", "ADMIN")
                         .anyRequest().hasRole("ADMIN"))
                 .addFilterBefore(new LoginFilter(authenticationManager(authenticationConfiguration), jwtUtil, securityUtil, baseUtil), UsernamePasswordAuthenticationFilter.class)
         ;

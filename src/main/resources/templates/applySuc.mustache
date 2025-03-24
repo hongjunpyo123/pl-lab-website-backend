@@ -283,6 +283,29 @@
             }
         }
     </style>
+    <script>
+        // 페이지 로드 완료 시 실행
+        window.onload = function() {
+            // 브라우저 히스토리에 현재 상태 추가
+            window.history.pushState(null, null, window.location.href);
+
+            // 뒤로가기 이벤트 감지
+            window.addEventListener('popstate', function() {
+                // 다시 현재 상태 추가하여 뒤로가기 방지
+                window.history.pushState(null, null, window.location.href);
+                // 선택적: 사용자에게 알림 표시
+                // alert("지원이 완료되었습니다. 이 페이지에서 뒤로 갈 수 없습니다.");
+            });
+        };
+
+        // 페이지 새로고침 방지 (선택적)
+        document.addEventListener('keydown', function(e) {
+            // F5 키(116) 또는 Ctrl+R(82) 방지
+            if (e.keyCode === 116 || (e.ctrlKey && e.keyCode === 82)) {
+                e.preventDefault();
+            }
+        });
+    </script>
 </head>
 <body>
 <div class="container">
@@ -331,8 +354,6 @@
                     </div>
                 </div>
             </div>
-
-
         </div>
     </div>
 </div>

@@ -2,6 +2,7 @@ package com.example.pl_lab_server.Admin.controller;
 
 import com.example.pl_lab_server.Admin.application.AdminAuthentication;
 import com.example.pl_lab_server.Admin.dto.AdminSignUpDto;
+import com.example.pl_lab_server.User.Dto.UserLoginDto;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletRequest;
@@ -27,6 +28,12 @@ public class AdminController {
     @PostMapping("/signup")
     public ResponseEntity<?> AdminSignUp(@RequestBody AdminSignUpDto adminSignUpDto){
         return adminAuthentication.AdminSignUp(adminSignUpDto);
+    }
+
+    @Operation(summary = "어드민 로그인 api", description = "어드민 페이지 로그인을 위한 api입니다.")
+    @PostMapping("/login")
+    public ResponseEntity<?> AdminLogin(@RequestBody UserLoginDto userLoginDto, HttpServletRequest request){
+        return adminAuthentication.AdminLogin(userLoginDto, request);
     }
 
 
